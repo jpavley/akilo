@@ -1,3 +1,5 @@
+#include <ctype.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <termios.h>
 #include <unistd.h>
@@ -22,6 +24,13 @@ int main() {
   enableRawMode();
 
   char c;
-  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q'); 
+  while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
+    if (iscntrl(c)) {
+      printf("%d\n", c); // print ASCII code of control char
+    } else {
+      printf("%d ('%c')\n", c, c); // print both ASCII code and char
+    }
+  }
+ 
   return 0;
 }
