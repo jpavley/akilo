@@ -28,9 +28,9 @@ int main() {
   char c;
   while (read(STDIN_FILENO, &c, 1) == 1 && c != 'q') {
     if (iscntrl(c)) {
-      printf("%d\n", c); // print ASCII code of control char
+      printf("%d\r\n", c); // print ASCII code of control char
     } else {
-      printf("%d ('%c')\n", c, c); // print both ASCII code and char
+      printf("%d ('%c')\r\n", c, c); // print both ASCII code and char
     }
   }
  
