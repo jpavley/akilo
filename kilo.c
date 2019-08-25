@@ -15,9 +15,13 @@ void enableRawMode() {
   atexit(disableRawMode);
 
   struct termios raw = orig_termios;
+  // input modes
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
+  // output modes
   raw.c_oflag &= ~(OPOST);
+  // control modes
   raw.c_cflag |= (CS8);
+  // local modes
   raw.c_lflag &= ~(ECHO | ICANON | IEXTEN | ISIG);
   // control characters
   raw.c_cc[VMIN] = 0;
