@@ -50,6 +50,27 @@ void enableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
 
+char editorReadKey() {
+	int nread;
+	char c;
+	while ((nread = read(STDIN_FILENO, &c, 1)) != 1) {
+		if (nread == -1 && errno != EAGAIN) die("read");
+	}
+	return c;
+}
+
+/** input **/
+
+void editorProcessKeypress() {
+	char c = editorReadKey();
+
+	switch (c) {
+		case CTRL_KEY('q'):
+			exit(0);
+			break;
+	}
+}
+
 /** init **/
 
 // main entry point of program
@@ -57,16 +78,9 @@ int main() {
   // turn off cononical mode
   enableRawMode();
 
-  // process key press
+  // process key press forever!
   while(1) {
-	char c = '\0';
-	if (read(STDIN_FILENO, &c, 1) == -1 && errno != EAGAIN) die("read"); 
-    if (iscntrl(c)) {
-      printf("%d\r\n", c); // print ASCII code of control char
-    } else {
-      printf("%d ('%c')\r\n", c, c); // print both ASCII code and char
-    }
-	if (c == CTRL_KEY('q')) break;
+		editorProcessKeypress();
   }
  
   return 0;
