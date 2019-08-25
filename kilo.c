@@ -4,12 +4,21 @@
 #include <termios.h>
 #include <unistd.h>
 
+// copy of the original terminal settings
 struct termios orig_termios;
 
+// restore the original terminal settings
 void disableRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios);
 }
 
+// prints an error message and exits
+void die(const char *s) {
+  perror(s);
+  exit(1);
+}
+
+// turns off cononical mode so we can process each key press
 void enableRawMode() {
   tcgetattr(STDIN_FILENO, &orig_termios);
   atexit(disableRawMode);
@@ -30,10 +39,12 @@ void enableRawMode() {
   tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw);
 }
 
+// main entry point of program
 int main() {
+  // turn off cononical mode
   enableRawMode();
 
-
+  // process key press
   while(1) {
 	char c = '\0';
 	read(STDIN_FILENO, &c, 1); 
