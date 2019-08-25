@@ -59,6 +59,12 @@ char editorReadKey() {
 	return c;
 }
 
+/** output **/
+
+void editorRefreshScreen() {
+	write(STDOUT_FILENO, "\x1b[2J", 4); // escape [2J erase all display
+}
+
 /** input **/
 
 void editorProcessKeypress() {
@@ -80,6 +86,7 @@ int main() {
 
   // process key press forever!
   while(1) {
+		editorRefreshScreen();
 		editorProcessKeypress();
   }
  
