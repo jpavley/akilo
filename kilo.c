@@ -62,7 +62,8 @@ char editorReadKey() {
 /** output **/
 
 void editorRefreshScreen() {
-	write(STDOUT_FILENO, "\x1b[2J", 4); // escape [2J erase all display
+	write(STDOUT_FILENO, "\x1b[2J", 4); // erase all display
+	write(STDOUT_FILENO, "\x1b[1;1H", 3); // move cursor to r1, c1
 }
 
 /** input **/
