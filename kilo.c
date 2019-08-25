@@ -7,6 +7,9 @@
 #include <termios.h>
 #include <unistd.h>
 
+/** defines **/
+
+#define CTRL_KEY(k) ((k) & 0x1f) // bitwise-AND char with mask 00011111
 /** data **/
 
 // copy of the original terminal settings
@@ -63,7 +66,7 @@ int main() {
     } else {
       printf("%d ('%c')\r\n", c, c); // print both ASCII code and char
     }
-	if (c == 'q') break;
+	if (c == CTRL_KEY('q')) break;
   }
  
   return 0;
