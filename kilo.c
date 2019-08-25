@@ -1,3 +1,5 @@
+/** includes **/
+
 #include <ctype.h>
 #include <errno.h>
 #include <stdio.h>
@@ -5,16 +7,18 @@
 #include <termios.h>
 #include <unistd.h>
 
+/** data **/
+
 // copy of the original terminal settings
 struct termios orig_termios;
 
+/** terminal **/
 
 // prints an error message and exits
 void die(const char *s) {
   perror(s);
   exit(1);
 }
-
 
 // restore the original terminal settings
 void disableRawMode() {
@@ -42,6 +46,8 @@ void enableRawMode() {
 
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw) == -1) die("tcsetattr");
 }
+
+/** init **/
 
 // main entry point of program
 int main() {
