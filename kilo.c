@@ -17,15 +17,18 @@ struct termios orig_termios;
 
 /** terminal **/
 
-// prints an error message and exits
-void die(const char *s) {
-  perror(s);
-  exit(1);
-}
-
+// clear screen and home the cursor
 void clearScreen() {
 	write(STDOUT_FILENO, "\x1b[2J", 4); // erase all display
 	write(STDOUT_FILENO, "\x1b[H", 3); // move cursor to r1, c1
+}
+
+// prints an error message and exits
+void die(const char *s) {
+	clearScreen();
+
+  perror(s);
+  exit(1);
 }
 
 // restore the original terminal settings
@@ -77,6 +80,7 @@ void editorProcessKeypress() {
 
 	switch (c) {
 		case CTRL_KEY('q'):
+			clearScreen();
 			exit(0);
 			break;
 	}
