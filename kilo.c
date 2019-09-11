@@ -69,8 +69,19 @@ char editorReadKey() {
 
 /** output **/
 
+// draw chars on first col of each row
+void editorDrawRows() {
+	int y;
+	for (y = 0; y < 24; y++) {
+		write(STDOUT_FILENO, "~\r\n", 3);
+	}
+}
+
+// update screen
 void editorRefreshScreen() {
 	clearScreen();
+	editorDrawRows();
+	write(STDOUT_FILENO, "\x1b[H", 3);
 }
 
 /** input **/
