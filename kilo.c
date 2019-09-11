@@ -23,6 +23,11 @@ void die(const char *s) {
   exit(1);
 }
 
+void clearScreen() {
+	write(STDOUT_FILENO, "\x1b[2J", 4); // erase all display
+	write(STDOUT_FILENO, "\x1b[H", 3); // move cursor to r1, c1
+}
+
 // restore the original terminal settings
 void disableRawMode() {
   if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
@@ -62,8 +67,7 @@ char editorReadKey() {
 /** output **/
 
 void editorRefreshScreen() {
-	write(STDOUT_FILENO, "\x1b[2J", 4); // erase all display
-	write(STDOUT_FILENO, "\x1b[H", 3); // move cursor to r1, c1
+	clearScreen();
 }
 
 /** input **/
