@@ -63,7 +63,7 @@ char editorReadKey() {
 
 void editorRefreshScreen() {
 	write(STDOUT_FILENO, "\x1b[2J", 4); // erase all display
-	write(STDOUT_FILENO, "\x1b[1;1H", 3); // move cursor to r1, c1
+	write(STDOUT_FILENO, "\x1b[H", 3); // move cursor to r1, c1
 }
 
 /** input **/
