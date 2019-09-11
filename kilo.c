@@ -10,10 +10,16 @@
 /** defines **/
 
 #define CTRL_KEY(k) ((k) & 0x1f) // bitwise-AND char with mask 00011111
+
 /** data **/
 
-// copy of the original terminal settings
-struct termios orig_termios;
+// store global state
+struct editorConfig {
+	// copy of the original terminal settings
+	struct termios orig_termios;
+};
+
+struct editorConfig E;
 
 /** terminal **/
 
@@ -33,16 +39,16 @@ void die(const char *s) {
 
 // restore the original terminal settings
 void disableRawMode() {
-  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_termios) == -1)
+  if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &E.orig_termios) == -1)
 		die("tcsetattr");
 }
 
 // turns off cononical mode so we can process each key press
 void enableRawMode() {
-  if (tcgetattr(STDIN_FILENO, &orig_termios) == -1) die("tcgetattr");
+  if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
 
-  struct termios raw = orig_termios;
+  struct termios raw = E.orig_termios;
   // input modes
   raw.c_iflag &= ~(BRKINT | ICRNL | INPCK | ISTRIP | IXON);
   // output modes
