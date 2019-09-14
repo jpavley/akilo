@@ -19,6 +19,8 @@
 
 // store global state
 struct editorConfig {
+	// cursor position
+	int cx, cy;
 	// screen size
 	int screenrows;
 	int screencols;
@@ -105,7 +107,10 @@ int getWindowSize(int *rows, int *cols) {
 	struct winsize ws;
 
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
-		if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) return -1;
+		if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) {
+			// move cursor forward (999C) and down (999B) to reach the bottom-right of the screen
+			return -1;
+		}
 		return getCursorPosition(rows, cols); 
 	} else {
 		*cols = ws.ws_col;
@@ -161,6 +166,7 @@ void editorDrawRows(struct abuf *ab) {
 			abAppend(ab, "~", 1);
 		}
 
+		// clear each line as it is drawn
 		abAppend(ab, "\x1b[K", 3);
 		if (y < E.screenrows - 1) {
 			abAppend(ab, "\r\n", 2);
@@ -171,13 +177,20 @@ void editorDrawRows(struct abuf *ab) {
 // update screen
 void editorRefreshScreen() {
 	struct abuf ab = ABUF_INIT;
-	
+
+	// hide cursor
 	abAppend(&ab, "\x1b[?25l", 6);
+	// set cursor position
 	abAppend(&ab, "\x1b[H", 3);
 
 	editorDrawRows(&ab);
 
-	abAppend(&ab, "\x1b[H", 3);
+  // move cursor to saved position
+	char buf[32];
+	snprintf(buf, sizeof(buf), "\x1b[%d;%dH", E.cy + 1, E.cx + 1);
+	abAppend(&ab, buf, strlen(buf));
+
+	// show cursor
 	abAppend(&ab, "\x1b[?25h", 6);
 
 	write(STDOUT_FILENO, ab.b, ab.len);
@@ -200,6 +213,9 @@ void editorProcessKeypress() {
 /** init **/
 
 void initEditor() {
+	E.cx = 0;
+	E.cy = 0;
+
 	if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
 		die("getWindowSize");
 	}
