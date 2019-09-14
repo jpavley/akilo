@@ -143,10 +143,19 @@ void editorDrawRows(struct abuf *ab) {
 	int y;
 	for (y = 0; y < E.screenrows; y++) {
 		if (y == E.screenrows / 3) {
+			// center vertically
 			char welcome[80];
 			int welcomelen = snprintf(welcome, sizeof(welcome),
 				"Kilo Editor -- Version %s", KILO_VERSION);
 			if (welcomelen > E.screencols) welcomelen = E.screencols;
+			// center horizonally
+			int padding = (E.screencols - welcomelen) / 2;
+			if (padding) {
+				abAppend(ab, "~", 1);
+				padding--;
+			}
+			while (padding--) abAppend(ab, " ", 1);
+			// append message to buffer
 			abAppend(ab, welcome, welcomelen);
 		} else {
 			abAppend(ab, "~", 1);
