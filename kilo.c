@@ -15,17 +15,20 @@
 
 #define CTRL_KEY(k) ((k) & 0x1f) // bitwise-AND char with mask 00011111
 
+// macOS Terminal app hijacks PAGE UP, PAGE DOWN, HOME, END  keys!
+// hold down <SHIFT> key for expected VT100 behavior
 enum editorKey {
 	// arrow keys
 	ARROW_LEFT = 1000,
 	ARROW_RIGHT,
 	ARROW_UP,
 	ARROW_DOWN,
+	// delete key
+	DEL_KEY,
 	// home and end keys
 	HOME_KEY,
 	END_KEY,
-	// macOS Terminal app hijacks PAGE keys!
-	// hold down <SHIFT> key for expected VT100 behavior
+	// page keys
 	PAGE_UP,
 	PAGE_DOWN
 };
@@ -113,6 +116,7 @@ int editorReadKey() {
 					// page keys: [0~ followed by 5 or 6
 					switch (seq[1]) {
 						case '1': return HOME_KEY; // <home> could be 1, 7
+						case '3': return DEL_KEY;
 						case '4': return END_KEY; // <end> could be 4, 8
 						case '5': return PAGE_UP;
 						case '6': return PAGE_DOWN;
