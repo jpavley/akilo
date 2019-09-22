@@ -235,24 +235,37 @@ void abFree(struct abuf *ab) {
 // draw chars on first col of each row
 void editorDrawRows(struct abuf *ab) {
 	int y;
+	// for every row on the screen
 	for (y = 0; y < E.screenrows; y++) {
-		if (y == E.screenrows / 3) {
-			// center vertically
-			char welcome[80];
-			int welcomelen = snprintf(welcome, sizeof(welcome),
-				"Kilo Editor -- Version %s", KILO_VERSION);
-			if (welcomelen > E.screencols) welcomelen = E.screencols;
-			// center horizonally
-			int padding = (E.screencols - welcomelen) / 2;
-			if (padding) {
+		// if the current row is not part of the text buffer
+		if (y >= E.numrows) {
+			// if the current row is about 1/3 of the screen down
+			if (y == E.screenrows / 3) {
+				// center vertically
+				char welcome[80];
+				int welcomelen = snprintf(welcome, sizeof(welcome),
+						"Kilo Editor -- Version %s", KILO_VERSION);
+				if (welcomelen > E.screencols) welcomelen = E.screencols;
+				// center horizonally
+				int padding = (E.screencols - welcomelen) / 2;
+				if (padding) {
+					abAppend(ab, "~", 1);
+					padding--;
+				}
+				while (padding--) abAppend(ab, " ", 1);
+				// append message to buffer
+				abAppend(ab, welcome, welcomelen);
+			} else {
+				// the current row is a blank line so print a '~' at the start
 				abAppend(ab, "~", 1);
-				padding--;
 			}
-			while (padding--) abAppend(ab, " ", 1);
-			// append message to buffer
-			abAppend(ab, welcome, welcomelen);
 		} else {
-			abAppend(ab, "~", 1);
+			// current line is part of the text buffer
+			int len = E.row.size;
+			// make the line length fit the lenght of the screen
+			if (len > E.screencols) len = E.screencols;
+			// append the text buffer line to output buffer
+			abAppend(ab, E.row.chars, len);
 		}
 
 		// clear each line as it is drawn
