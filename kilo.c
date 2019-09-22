@@ -16,10 +16,14 @@
 #define CTRL_KEY(k) ((k) & 0x1f) // bitwise-AND char with mask 00011111
 
 enum editorKey {
+	// arrow keys
 	ARROW_LEFT = 1000,
 	ARROW_RIGHT,
 	ARROW_UP,
 	ARROW_DOWN,
+	// home and end keys
+	HOME_KEY,
+	END_KEY,
 	// macOS Terminal app hijacks PAGE keys!
 	// hold down <SHIFT> key for expected VT100 behavior
 	PAGE_UP,
@@ -106,20 +110,33 @@ int editorReadKey() {
 			if (seq[1] >= '0' && seq[1] <= '9') {
 				if (read(STDIN_FILENO, &seq[2], 1) != 1) return '\x1b';
 				if (seq[2] == '~') {
-					// page keys: [0 followed by 5 or 6
+					// page keys: [0~ followed by 5 or 6
 					switch (seq[1]) {
+						case '1': return HOME_KEY; // <home> could be 1, 7
+						case '4': return END_KEY; // <end> could be 4, 8
 						case '5': return PAGE_UP;
 						case '6': return PAGE_DOWN;
+						case '7': return HOME_KEY;
+						case '8': return END_KEY;
 					}
 				}
 			} else {
 				// arrow keys: [ followed by A, B, C, or D
+				// home & end keys: [ followed by H or F
 				switch (seq[1]) {
 					case 'A': return ARROW_UP;
 					case 'B': return ARROW_DOWN;
 					case 'C': return ARROW_RIGHT;
 					case 'D': return ARROW_LEFT;
+					case 'H': return HOME_KEY;
+					case 'F': return END_KEY;
 				}
+			}
+		} else if (seq[0] == 'O') {
+			// home & end keys: [O followed by H or F
+			switch (seq[1]) {
+				case 'H': return HOME_KEY;
+				case 'F': return END_KEY;
 			}
 		}
 
@@ -277,6 +294,14 @@ void editorProcessKeypress() {
 		case CTRL_KEY('q'):
 			clearScreen();
 			exit(0);
+			break;
+
+		case HOME_KEY:
+			E.cx = 0;
+			break;
+
+		case END_KEY:
+			E.cx = E.screencols - 1;
 			break;
 
 		case PAGE_UP:
