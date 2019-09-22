@@ -99,12 +99,13 @@ int editorReadKey() {
 		if (nread == -1 && errno != EAGAIN) die("read");
 	}
 
-	// process arrow keys <esc> A,B,C,D
+	// look for an <esc> value...
 	if (c == '\x1b') { // <esc>
 		char seq[3];
 		
-		// look for a <esc> value, if it times out, assume the user pressed
-		// the physucal ESC key, otherwise it's am <esc> sequence!
+		// ... if read() times out waiting for the next chars in the sequence
+		// assume the user pressed the physical ESC key and return the <esc> code,
+		// otherwise it's an <esc> sequence!
 		if (read(STDIN_FILENO, &seq[0], 1) != 1) return '\x1b';
 		if (read(STDIN_FILENO, &seq[1], 1) != 1) return '\x1b';
 
@@ -113,7 +114,7 @@ int editorReadKey() {
 			if (seq[1] >= '0' && seq[1] <= '9') {
 				if (read(STDIN_FILENO, &seq[2], 1) != 1) return '\x1b';
 				if (seq[2] == '~') {
-					// page keys: [0~ followed by 5 or 6
+					// special keys: [n~ where n = 0...9 
 					switch (seq[1]) {
 						case '1': return HOME_KEY; // <home> could be 1, 7
 						case '3': return DEL_KEY;
@@ -121,7 +122,7 @@ int editorReadKey() {
 						case '5': return PAGE_UP;
 						case '6': return PAGE_DOWN;
 						case '7': return HOME_KEY;
-						case '8': return END_KEY;
+						case '8': return END_KEY; // <esc>[8~
 					}
 				}
 			} else {
