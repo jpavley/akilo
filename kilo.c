@@ -35,6 +35,11 @@ enum editorKey {
 
 /** data **/
 
+typedef struct erow {
+	int size;
+	char *chars;
+} erow;
+
 // store global state
 struct editorConfig {
 	// cursor position
@@ -42,7 +47,9 @@ struct editorConfig {
 	// screen size
 	int screenrows;
 	int screencols;
-	
+	// line of text
+	int numrows;
+	erow row;
 	// copy of the original terminal settings
 	struct termios orig_termios;
 };
@@ -332,6 +339,7 @@ void editorProcessKeypress() {
 void initEditor() {
 	E.cx = 0;
 	E.cy = 0;
+	E.numrows = 0;
 
 	if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
 		die("getWindowSize");
