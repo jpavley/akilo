@@ -258,7 +258,7 @@ void editorDrawRows(struct abuf *ab) {
 		// if the current row is not part of the text buffer
 		if (y >= E.numrows) {
 			// if the current row is about 1/3 of the screen down
-			if (y == E.screenrows / 3) {
+			if (E.numrows == 0 && y == E.screenrows / 3) {
 				// center vertically
 				char welcome[80];
 				int welcomelen = snprintf(welcome, sizeof(welcome),
