@@ -184,7 +184,8 @@ int getWindowSize(int *rows, int *cols) {
 
 	if(ioctl(STDOUT_FILENO, TIOCGWINSZ, &ws) == -1 || ws.ws_col == 0) {
 		if (write(STDOUT_FILENO, "\x1b[999C\x1b[999B", 12) != 12) {
-			// move cursor forward (999C) and down (999B) to reach the bottom-right of the screen
+			// move cursor forward (999C) and down (999B) 
+			// to reach the bottom-right of the screen
 			return -1;
 		}
 		return getCursorPosition(rows, cols); 
