@@ -84,7 +84,7 @@ void disableRawMode() {
 		die("tcsetattr");
 }
 
-// turns off cononical mode so we can process each key press
+// turns off canonical mode so we can process each key press
 void enableRawMode() {
   if (tcgetattr(STDIN_FILENO, &E.orig_termios) == -1) die("tcgetattr");
   atexit(disableRawMode);
@@ -281,7 +281,7 @@ void editorDrawRows(struct abuf *ab) {
 		} else {
 			// current line is part of the text buffer
 			int len = E.row.size;
-			// make the line length fit the lenght of the screen
+			// make the line length fit the length of the screen
 			if (len > E.screencols) len = E.screencols;
 			// append the text buffer line to output buffer
 			abAppend(ab, E.row.chars, len);
@@ -394,7 +394,7 @@ void initEditor() {
 
 // main entry point of program
 int main(int argc, char *argv[]) {
-  enableRawMode(); // turn off cononical mode
+  enableRawMode(); // turn off canonical mode
 	initEditor(); // get the window info
 	if (argc >= 2) {
 		editorOpen(argv[1]); // open and read a file

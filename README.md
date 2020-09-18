@@ -1,4 +1,4 @@
-# akilo
+# Kilo
 
 Build your own text editor in C tutorial
 
