@@ -55,7 +55,7 @@ struct editorConfig {
 	int screencols;
 	// line of text
 	int numrows;
-	erow row;
+	erow *row;
 	// copy of the original terminal settings
 	struct termios orig_termios;
 };
@@ -386,6 +386,7 @@ void initEditor() {
 	E.cx = 0;
 	E.cy = 0;
 	E.numrows = 0;
+	E.row = NULL;
 
 	if (getWindowSize(&E.screenrows, &E.screencols) == -1) {
 		die("getWindowSize");
