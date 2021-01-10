@@ -289,11 +289,11 @@ void editorDrawRows(struct abuf *ab) {
 			}
 		} else {
 			// current line is part of the text buffer
-			int len = E.row.size;
+			int len = E.row[y].size;
 			// make the line length fit the length of the screen
 			if (len > E.screencols) len = E.screencols;
 			// append the text buffer line to output buffer
-			abAppend(ab, E.row.chars, len);
+			abAppend(ab, E.row[y].chars, len);
 		}
 
 		// clear each line as it is drawn
